@@ -37,6 +37,7 @@ public slots:
     void slotNewFile();  
     void slotOpenFile();  
     void slotSaveFile();  
+
 private:
 	Ui::MainUIClass ui;
 	GLWidget *glWidget;
@@ -47,7 +48,10 @@ private:
   
     QToolBar *fileTool;  
     QToolBar *editTool;  
-  
+    QToolBar *directionTool;
+	QToolBar *rotateTool;
+	QToolBar *zoomTool;
+
     QAction *fileOpenAction;  
     QAction *fileNewAction;  
     QAction *fileSaveAction;  
@@ -56,8 +60,21 @@ private:
     QAction *cutAction;  
     QAction *pasteAction;  
     QAction *aboutAction;  
-  
+    QAction *leftAction;
+	QAction *rightAction;
+	QAction *upAction;
+    QAction *downAction;
+	QAction *xPAction;
+	QAction *xNAction;
+	QAction *yPAction;
+	QAction *yNAction;
+	QAction *zPAction;
+	QAction *zNAction;
+	QAction *zoomInAction;
+	QAction *zoomOutAction;
+
     QTextEdit *text;  
+
 
 };
 

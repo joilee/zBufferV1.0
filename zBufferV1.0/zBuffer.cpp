@@ -5,7 +5,7 @@
 #include "dataManage.h"
 
 #define GLUT_DISABLE_ATEXIT_HACK
-#include "glut.h"
+#include <gl/glut.h> 
 
 zBuffer::zBuffer()
 {

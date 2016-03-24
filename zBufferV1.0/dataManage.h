@@ -4,8 +4,8 @@
 #define FLT_MAX 3.402823466e+38F
 #define FLT_MIN 1.175494351e-38F
 
-#define WIDTH_MAX 512
-#define HEIGHT_MAX 512 
+#define WIDTH_MAX 1024
+#define HEIGHT_MAX 1024 
 
 #include <math.h>
 #include <vector>
@@ -242,6 +242,7 @@ public:
 	{
 		unsigned int i;
 		vertices_rendering.clear();
+		vertices_original.clear();
 		polygons.clear();
 		for(i = 1;i <= glmModel->numvertices;i++)
 		{

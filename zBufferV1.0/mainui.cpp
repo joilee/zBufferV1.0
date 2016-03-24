@@ -6,13 +6,21 @@ MainUI::MainUI(QWidget *parent, Qt::WFlags flags)
 	//ui.setupUi(this);
 	this->resize( QSize( 800, 600 ));
 	setWindowTitle(tr("QMainWindow"));  
-    //text = new QTextEdit(this); 
+
+
 	glWidget =new GLWidget();
-    setCentralWidget(glWidget);  
-  
+   setCentralWidget(glWidget);  
+
+
+
+
+
     createActions();  
     createMenus();  
     createToolBars();  
+
+
+	connect(this,SIGNAL(signal_loadObj(QString)),glWidget,SLOT(slot_receiveObj(QString)));
 }
 
 MainUI::~MainUI()
@@ -46,21 +54,68 @@ void MainUI::createActions()
     cutAction = new QAction(QIcon(":/images/cut.png"),tr("Cut"),this);  
     cutAction->setShortcut(tr("Ctrl+X"));  
     cutAction->setStatusTip(tr("cut to clipboard"));  
-    connect(cutAction,SIGNAL(triggered()),text,SLOT(cut()));  
+   // connect(cutAction,SIGNAL(triggered()),text,SLOT(cut()));  
   
     copyAction = new QAction(QIcon(":/images/copy.png"),tr("Copy"),this);  
     copyAction->setShortcut(tr("Ctrl+C"));  
     copyAction->setStatusTip(tr("copy to clipboard"));  
-    connect(copyAction,SIGNAL(triggered()),this,SLOT(copy()));  
+   // connect(copyAction,SIGNAL(triggered()),this,SLOT(copy()));  
   
     pasteAction = new QAction(QIcon(":/images/paste.png"),tr("paste"),this);  
     pasteAction->setShortcut(tr("Ctrl+V"));  
     pasteAction->setStatusTip(tr("paste clipboard to selection"));  
-    connect(pasteAction,SIGNAL(triggered()),this,SLOT(paste()));  
+   // connect(pasteAction,SIGNAL(triggered()),this,SLOT(paste()));  
   
     aboutAction = new QAction(tr("About"),this);  
-    connect(aboutAction,SIGNAL(triggered()),this,SLOT(slotAbout()));  
-  
+  //  connect(aboutAction,SIGNAL(triggered()),this,SLOT(slotAbout()));  
+    
+	leftAction=new QAction(QIcon(":/images/left.png"),tr("left"),this);
+	pasteAction->setStatusTip(tr("向左移动")); 
+	connect(leftAction,SIGNAL(triggered()),glWidget,SLOT(slotLeft()));  
+
+	rightAction=new QAction(QIcon(":/images/right.png"),tr("right"),this);
+	rightAction->setStatusTip(tr("向右移动")); 
+	connect(rightAction,SIGNAL(triggered()),glWidget,SLOT(slotRight()));  
+
+	upAction=new QAction(QIcon(":/images/up.png"),tr("up"),this);
+	upAction->setStatusTip(tr("向上移动")); 
+	connect(upAction,SIGNAL(triggered()),glWidget,SLOT(slotUp()));  
+
+	downAction=new QAction(QIcon(":/images/down.png"),tr("down"),this);
+	downAction->setStatusTip(tr("向下移动")); 
+	connect(downAction,SIGNAL(triggered()),glWidget,SLOT(slotDown()));  
+
+	xPAction=new QAction(QIcon(":/images/xp.png"),tr("Rotate around X Positive"),this);
+	xPAction->setStatusTip(tr("x轴正向旋转"));
+	connect(xPAction,SIGNAL(triggered()),glWidget,SLOT(slotRotateXP())); 
+
+	xNAction=new QAction(QIcon(":/images/xn.png"),tr("Rotate around X Negative"),this);
+	xNAction->setStatusTip(tr("x轴逆向旋转"));
+	connect(xNAction,SIGNAL(triggered()),glWidget,SLOT(slotRotateXN())); 
+
+	yPAction=new QAction(QIcon(":/images/yp.png"),tr("Rotate around Y Positive"),this);
+	yPAction->setStatusTip(tr("y轴正向旋转"));
+	connect(yPAction,SIGNAL(triggered()),glWidget,SLOT(slotRotateYP())); 
+
+	yNAction=new QAction(QIcon(":/images/yn.png"),tr("Rotate around X Negative"),this);
+	yNAction->setStatusTip(tr("y轴逆向旋转"));
+	connect(yNAction,SIGNAL(triggered()),glWidget,SLOT(slotRotateYN())); 
+
+	zPAction=new QAction(QIcon(":/images/zp.png"),tr("Rotate around Z Positive"),this);
+	zPAction->setStatusTip(tr("z轴正向旋转"));
+	connect(zPAction,SIGNAL(triggered()),glWidget,SLOT(slotRotateZP())); 
+
+	zNAction=new QAction(QIcon(":/images/zn.png"),tr("Rotate around Z Negative"),this);
+	zNAction->setStatusTip(tr("z轴逆向旋转"));
+	connect(zNAction,SIGNAL(triggered()),glWidget,SLOT(slotRotateZN())); 
+
+	zoomInAction=new QAction(QIcon(":/images/zoomin.png"),tr("zoom In"),this);
+	zoomInAction->setStatusTip("zoom in");
+	connect(zoomInAction,SIGNAL(triggered()),glWidget,SLOT(slotZoomIn()));
+
+	zoomOutAction=new QAction(QIcon(":/images/zoomout.png"),tr("zoom out"),this);
+	zoomInAction->setStatusTip("zoom out");
+	connect(zoomOutAction,SIGNAL(triggered()),glWidget,SLOT(slotZoomOut()));
 }  
 
 void MainUI::createMenus()  
@@ -94,12 +149,29 @@ void MainUI::createToolBars()
     editTool->addAction(copyAction);  
     editTool->addAction(cutAction);  
     editTool->addAction(pasteAction);  
+
+	directionTool=addToolBar("Direction");
+	directionTool->addAction(leftAction);
+	directionTool->addAction(rightAction);
+	directionTool->addAction(upAction);
+	directionTool->addAction(downAction);
+	
+	rotateTool=addToolBar("Rotate");
+	rotateTool->addAction(xPAction);
+	rotateTool->addAction(xNAction);
+	rotateTool->addAction(yPAction);
+	rotateTool->addAction(yNAction);
+	rotateTool->addAction(zPAction);
+	rotateTool->addAction(zNAction);
+	
+	zoomTool=addToolBar("zoom");
+	zoomTool->addAction(zoomInAction);
+	zoomTool->addAction(zoomOutAction);
 }  
   
 void MainUI::slotNewFile()  
 {  
-    MainUI *newWin = new MainUI;  
-    newWin->show();  
+   
 }
 
 void MainUI::slotOpenFile()  
@@ -115,24 +187,10 @@ void MainUI::slotOpenFile()
 
 void MainUI::loadFile(QString fileName)  
 {  
-  //  printf("file name:%s\n",fileName.data());  
-    QFile file(fileName);  
-    if(file.open(QIODevice::ReadOnly))  
-    {  
-		if(glWidget->glmObjModel != NULL)
-		{
-			glmDelete(glWidget->glmObjModel);
-		}
-		std::string str = fileName.toStdString();
-
-		char* ch =new char(strlen(str.c_str())+1);
-		memset(ch,'\0',strlen(str.c_str())+1);
-		strcpy(ch,str.c_str());
-		glWidget->glmObjModel = glmReadOBJ(ch);//read obj file by using GLM
-		glWidget->model.toZufferModel(glWidget->glmObjModel);//translate to zBufferModel 
-		glWidget->zbuffer.setModel(&glWidget->model);//完成读取和设置
-    }  
+  
 } 
 
 void MainUI::slotSaveFile()
-{}
+{
+
+}

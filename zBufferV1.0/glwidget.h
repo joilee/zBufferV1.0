@@ -23,10 +23,23 @@ public:
 	zBuffer zbuffer;
   GLWidget(QGLWidget *parent = 0);
   ~GLWidget();
-
+   void translate(zBufferModel *model, int x, int y, int z);
+    void rotate(zBufferModel *model, int axis, int angle) ;
+    void scale(zBufferModel *model, float scale_factor);
   public slots:
 	  void slot_receiveObj(QString path);
-	  void slot_finishLoadObj();
+	  void slotLeft();
+	  void slotRight();
+	  void slotUp();
+	  void slotDown();
+	  void slotRotateXP();
+	  void slotRotateXN();
+	  void slotRotateYP();
+	  void slotRotateYN();
+      void slotRotateZP();
+	  void slotRotateZN();
+	  void slotZoomIn();
+	  void slotZoomOut();
 
 protected:
   void initializeGL();
