@@ -75,7 +75,7 @@ public:
 };
 
 //edge
-typedef struct _Edge
+typedef struct _Edge  //分类边表
 {
 	int x; // 边的上端点的x坐标
 	float dx; //相邻两条扫描线交点的x坐标差
@@ -215,6 +215,8 @@ public:
 		float s,trans;
 		trans = WIN_WIDTH < WIN_HEIGHT ? WIN_WIDTH : WIN_HEIGHT;
 		getModelDimension();
+
+		//将模型加载至中间
 		s = trans / (2.5 * maxValue(dim_max.x - dim_min.x,dim_max.y - dim_min.y, dim_max.z - dim_min.z));
 		trans /= 2;
 
@@ -226,9 +228,9 @@ public:
 			vertices_rendering[i].x = toInt(vertices_original[i].x + trans);
 			vertices_rendering[i].y = toInt(vertices_original[i].y + trans);
 			vertices_rendering[i].z = toInt(vertices_original[i].z + trans);
-
 		}
 
+		//更新最大值最小值
 		getModelDimension();
 		changed = true;
 

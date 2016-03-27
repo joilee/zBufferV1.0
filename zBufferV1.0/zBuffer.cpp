@@ -3,6 +3,7 @@
 #include <functional>
 #include <math.h>
 #include "dataManage.h"
+#include <QDebug>
 
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <gl/glut.h> 
@@ -62,7 +63,7 @@ void zBuffer::genratePTandET()
 		for(;it != it_end;it++)
 		{
 			Edge edge(model->vertices_rendering[id_pre],model->vertices_rendering[*it],ymax_edge,i);
-			et[toInt(ymax_edge)].push_back(edge);//store edge into 边y桶
+			et[toInt(ymax_edge)].push_back(edge);//store edge into 边表
 
 			id1 = id_pre;
 			id_pre = *it;
@@ -76,15 +77,15 @@ void zBuffer::genratePTandET()
 		}
 		//the line between the last vertex and the first vertex
 		Edge edge(model->vertices_rendering[id_pre],model->vertices_rendering[id0],ymax_edge,i);
-		et[toInt(ymax_edge)].push_back(edge);//store edge into 边y桶
+		et[toInt(ymax_edge)].push_back(edge);//store edge into 边表
 		
-		//construct 多边形y桶
-		//now id0:the first vertex id id1:the middle vertex id id_pre:the last vertex id
+		//construct 多边形表
+		//now id0:the first vertex id           id1:the middle vertex id id_pre:the last vertex id
 		PolygonStruct polygon(model->vertices_rendering[id0],model->vertices_rendering[id1],model->vertices_rendering[id_pre]);
 		polygon.IP = i;
 		polygon.dy = ymax - ymin + 1;
 		
-		pt[toInt(ymax)].push_back(polygon);//store polygon into 多边形y桶
+		pt[toInt(ymax)].push_back(polygon);//store polygon into 多边形表
 
 		if(img_top < toInt(ymax)) img_top = ymax;
 		if(img_bottom > toInt(ymin)) img_bottom = ymin;
@@ -99,7 +100,7 @@ void zBuffer::zpaint()
 		return;
 	}
 
-	//generate 多边形y桶和边y桶
+	//产生多边形表和边表
 	genratePTandET();
 	
 	int i,j,k,draw_count=0;
@@ -174,7 +175,7 @@ void zBuffer::zpaint()
 					}
 					else
 					{
-						aEdge.zl = a_c * edge->x + b_c * i + d_c;
+						aEdge.zl = a_c * edge->x + b_c * i + d_c;//根据平面方程得出
 						aEdge.dzx = a_c;
 						aEdge.dzy = -b_c;
 					}
@@ -260,7 +261,7 @@ void zBuffer::zpaint()
 		}
 	}
 
-	printf("Pixels:%d\n",draw_count);
+	qDebug("Pixels:%d\n",draw_count);
 
 	//clear active polygon and active edge
 	for(i = static_cast<int>(apt.size())-1;i >= 0;i--)

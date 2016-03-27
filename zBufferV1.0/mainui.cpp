@@ -4,21 +4,16 @@ MainUI::MainUI(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
 	//ui.setupUi(this);
-	this->resize( QSize( 800, 600 ));
-	setWindowTitle(tr("QMainWindow"));  
+	this->resize( QSize( 1000, 700 ));
+	setWindowTitle(tr("Zbuffer"));  
 
 
 	glWidget =new GLWidget();
-   setCentralWidget(glWidget);  
-
-
-
-
+    setCentralWidget(glWidget);  
 
     createActions();  
     createMenus();  
     createToolBars();  
-
 
 	connect(this,SIGNAL(signal_loadObj(QString)),glWidget,SLOT(slot_receiveObj(QString)));
 }

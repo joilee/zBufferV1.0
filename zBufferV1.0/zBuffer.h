@@ -23,9 +23,9 @@ private:
 	GLubyte fbuffer_L[HEIGHT_MAX][WIDTH_MAX][3];//color buffer
 	zBufferModel * model;
 	
-	vector<Edge> et[HEIGHT_MAX+1];//边y桶
+	vector<Edge> et[HEIGHT_MAX+1];//边表，每个高度都有一个边表
 	vector<ActivePolygon> apt;//活化多边形表
-	vector<PolygonStruct> pt[HEIGHT_MAX+1];//多边形y桶
+	vector<PolygonStruct> pt[HEIGHT_MAX+1];//多边形表
 
 	void clear();
 	
